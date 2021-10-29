@@ -6,7 +6,6 @@ import { $, $$ } from "./index";
 function RightMenu(props) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
-	console.log(props.tasks);
 	useEffect(() => {
 		[...$$("li")].forEach((option) => {
 			if (!props.tasks.includes(option.innerText)) {
