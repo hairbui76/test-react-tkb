@@ -8,9 +8,8 @@ const Data2 = require("../models/Data2");
 mongoose
 	.connect(
 		process.env.MONGODB_URI ||
-			"mongodb+srv://yasuo:buihaidz2k3@new.hborl.mongodb.net/",
+			"mongodb+srv://yasuo:buihaidz2k3@new.hborl.mongodb.net/react_test?retryWrites=true&w=majority",
 		{
-			dbName: "react_test",
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		}
