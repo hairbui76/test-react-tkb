@@ -6,10 +6,15 @@ const Data1 = require("../models/Data1");
 const Data2 = require("../models/Data2");
 
 mongoose
-	.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/test", {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
+	.connect(
+		process.env.MONGODB_URI ||
+			"mongodb+srv://yasuo:buihaidz2k3@new.hborl.mongodb.net/",
+		{
+			dbName: "react_test",
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		}
+	)
 	.then(() => console.log("connect successfully"))
 	.catch((err) => console.log(err));
 
@@ -27,7 +32,7 @@ router.get("/group2", (req, res) => {
 
 router.post("/group1", (req, res) => {
 	Data1.deleteMany({}).catch((err) => console.log(err));
-	req.body.filter((data) => {
+	req.body.forEach((data) => {
 		let newData = new Data1(data);
 		newData.save();
 	});
@@ -35,7 +40,7 @@ router.post("/group1", (req, res) => {
 
 router.post("/group2", (req, res) => {
 	Data2.deleteMany({}).catch((err) => console.log(err));
-	req.body.filter((data) => {
+	req.body.forEach((data) => {
 		let newData = new Data2(data);
 		newData.save();
 	});

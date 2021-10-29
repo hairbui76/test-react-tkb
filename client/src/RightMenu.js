@@ -8,7 +8,6 @@ function RightMenu(props) {
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
 	console.log(props.tasks);
 	useEffect(() => {
-		console.log("hello");
 		[...$$("li")].forEach((option) => {
 			if (!props.tasks.includes(option.innerText)) {
 				option.remove();

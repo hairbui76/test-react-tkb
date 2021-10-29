@@ -7,7 +7,6 @@ function Group(props) {
 	const [task, setTask] = useState("");
 	const [tasks, setTasks] = useState([]);
 	useLayoutEffect(() => {
-		console.log("hehhe");
 		setTasks([
 			...new Set(
 				props.datum.map((data) => {

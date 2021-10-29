@@ -16,7 +16,6 @@ function Footer(props) {
 			createTask.offsetHeight +
 			40 +
 			"px";
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const handleShowCreateMenu = () => {
 		$("#right-menu").style.display =
