@@ -1,0 +1,14 @@
+#left {
+	position: absolute;
+	bottom: 0;
+	margin: 1%;
+	display: flex;
+	width: 20%;
+	height: 5%;
+}
+
+div #btn-1,
+#btn-2 {
+	width: 100%;
+	margin: 1%;
+}
