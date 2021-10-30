@@ -14,7 +14,7 @@ function Group(props) {
 				})
 			),
 		]);
-	}, [props.datum]);
+	}, [props.stateShowGroup, props.datum]);
 	return (
 		<>
 			<TaskTable

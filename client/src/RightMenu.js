@@ -50,8 +50,7 @@ function RightMenu(props) {
 				cell.lastChild.style.display = "none";
 			}
 		});
-		props.setTasks((prev) => prev.splice(prev.indexOf(removeContent), 1));
-		console.log("hi");
+		props.setTasks((prev) => [...prev.splice(removeContent, 1)]);
 	};
 	return (
 		<div id="right-menu">
@@ -85,7 +84,7 @@ function RightMenu(props) {
 								alt="logo-delete-task"
 								src={logoDeleteTask}
 								className="close"
-								onClick={(e) => handleDeleteTask(e)}
+								onClick={handleDeleteTask}
 							/>
 						</div>
 					);
