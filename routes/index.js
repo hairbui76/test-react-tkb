@@ -6,14 +6,10 @@ const Data1 = require("../models/Data1");
 const Data2 = require("../models/Data2");
 
 mongoose
-	.connect(
-		process.env.MONGODB_URI ||
-			"mongodb+srv://yasuo:buihaidz2k3@new.hborl.mongodb.net/react_test?retryWrites=true&w=majority",
-		{
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		}
-	)
+	.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/test", {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => console.log("connect successfully"))
 	.catch((err) => console.log(err));
 
