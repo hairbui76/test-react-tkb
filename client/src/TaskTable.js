@@ -122,6 +122,15 @@ function TaskTable(props) {
 		e.target.parentElement.parentElement.outerHTML = changeText;
 		$(`img[alt='${e.target.parentElement.id}']`).style.display = "block";
 		setCheckedCell(-1);
+		props.setCurrentData(
+			[...$$(".task-each")].map((cell) => {
+				return {
+					content: cell.innerText,
+					color: cell.style.color,
+					background: cell.style.backgroundColor,
+				};
+			})
+		);
 	};
 	const handleTableResize = () => {
 		setWindowWidth(window.innerWidth);

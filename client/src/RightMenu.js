@@ -50,7 +50,8 @@ function RightMenu(props) {
 				cell.lastChild.style.display = "none";
 			}
 		});
-		props.setTasks((prev) => [...prev.splice(removeContent, 1)]);
+		// array splice is not working?
+		props.setTasks((prev) => prev.filter((check) => check !== removeContent));
 	};
 	return (
 		<div id="right-menu">
