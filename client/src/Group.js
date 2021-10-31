@@ -58,7 +58,6 @@ function Group(props) {
 				task={task}
 				setTask={setTask}
 				currentData={currentData}
-				undoRedoHandler={undoRedoHandler.current}
 			/>
 			<Footer
 				setStateSaveData={props.setStateSaveData}

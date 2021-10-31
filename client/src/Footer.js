@@ -39,20 +39,27 @@ function Footer(props) {
 			$("#right-menu").style.display === "none" ? "block" : "none";
 	};
 	const handleSaveData = () => {
-		const taskEach = [...$$(".task-each")];
-		let arr = [];
-		for (let i = 0; i < taskEach.length; ++i) {
-			if (taskEach[i].innerText) {
-				arr.push({
-					task: taskEach[i].innerText,
-					index: i,
-					background: taskEach[i].style.backgroundColor,
-					color: taskEach[i].style.color,
-					updateAt: Date(),
-				});
-			}
+		let check = prompt(
+			"CAUTION: THIS WILL DETELE ALL YOU PREVIOUS DATA AND CANNOT BE UNDO!\nPlease insert your leader's password to continue"
+		);
+		if (check) {
+			if (check.trim() === "chienthan") {
+				const taskEach = [...$$(".task-each")];
+				let arr = [];
+				for (let i = 0; i < taskEach.length; ++i) {
+					if (taskEach[i].innerText) {
+						arr.push({
+							task: taskEach[i].innerText,
+							index: i,
+							background: taskEach[i].style.backgroundColor,
+							color: taskEach[i].style.color,
+							updateAt: Date(),
+						});
+					}
+				}
+				sendData(arr);
+			} else alert("Wrong password! Please contact your leader to continue");
 		}
-		sendData(arr);
 	};
 	const sendData = (arr) => {
 		if (props.currentGroup === 1) {
