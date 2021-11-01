@@ -5,32 +5,6 @@ import html2canvas from "html2canvas";
 
 function Footer(props) {
 	useEffect(() => {
-		props.setCurrentData(
-			[...$$(".task-each")].map((cell) => {
-				return {
-					content: cell.innerText,
-					color: cell.style.color,
-					background: cell.style.backgroundColor,
-				};
-			})
-		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.datum]);
-	useEffect(() => {
-		const footer = $("#footer");
-		const taskContainer = $("#task-container");
-		const body = $("body");
-		const createTask = $("#create-task");
-		footer.style.width = footer.firstChild.offsetWidth + "px";
-		footer.style.height = footer.firstChild.offsetHeight + "px";
-		taskContainer.style.height =
-			body.offsetHeight -
-			footer.offsetHeight -
-			createTask.offsetHeight +
-			40 +
-			"px";
-	}, []);
-	useEffect(() => {
 		document.addEventListener("keydown", handleUndoRedoUseKeyboard);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -118,16 +92,19 @@ function Footer(props) {
 	const handleUndoRedoState = (state) => {
 		if (state) {
 			props.isUndoRedo.current = true;
+			props.setUndoRedoSignal(!props.undoRedoSignal);
 			props.setCurrentData(state.currentData);
 			props.setTasks(state.currentTasks);
 		}
 	};
 	const handleUndo = () => {
-		let state = props.undoRedoHandler.getPrevState();
+		console.log(props.undoRedoHandler.current);
+		let state = props.undoRedoHandler.current.getPrevState();
 		handleUndoRedoState(state);
 	};
 	const handleRedo = () => {
-		let state = props.undoRedoHandler.getNextState();
+		console.log(props.undoRedoHandler.current);
+		let state = props.undoRedoHandler.current.getNextState();
 		handleUndoRedoState(state);
 	};
 	const handleUndoRedoUseKeyboard = (e) => {

@@ -1,30 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./css/RightMenu.css";
 import logoDeleteTask from "./svg/times-circle-regular.svg";
-import { $, $$ } from "./index";
+import { $$ } from "./index";
 
 function RightMenu(props) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
-	useEffect(() => {
-		[...$$("li")].forEach((option) => {
-			if (!props.tasks.includes(option.innerText)) {
-				option.remove();
-			}
-		});
-	}, [props.tasks]);
-	useEffect(() => {
-		if ($(".task")) {
-			let taskBox = [...$$(".task")];
-			let totalHeight =
-				$("#footer").offsetHeight + $("#create-task").offsetHeight;
-			for (let i = 0; i < taskBox.length; ++i) {
-				totalHeight += taskBox[i].offsetHeight;
-				if (totalHeight > $("#task-container").offsetHeight)
-					$("#task-container").style.overflowY = "scroll";
-			}
-		}
-	}, [props.tasks]);
 	const handleCreateTaskByEnter = (e) => {
 		if (e.key === "Enter") handleCreateTask();
 	};
@@ -50,8 +31,11 @@ function RightMenu(props) {
 				cell.lastChild.style.display = "none";
 			}
 		});
-		// array splice is not working?
-		props.setTasks((prev) => prev.filter((check) => check !== removeContent));
+		props.setTasks((prev) => {
+			let newTasks = [...prev];
+			return newTasks.splice(removeContent, 1);
+		});
+		props.handleCurrentData();
 	};
 	return (
 		<div id="right-menu">

@@ -8,24 +8,38 @@ function TaskTable(props) {
 	const [checkedCell, setCheckedCell] = useState(-1);
 	const [windowWidth, setWindowWidth] = useState(0);
 	const [updateAt, setUpdateAt] = useState("");
-	const [optionLists, setOptionLists] = useState([]);
+	console.log(props.undoRedoHandler.current);
+	useEffect(() => {
+		const footer = $("#footer");
+		const taskContainer = $("#task-container");
+		const body = $("body");
+		const createTask = $("#create-task");
+		footer.style.width = footer.firstChild.offsetWidth + "px";
+		footer.style.height = footer.firstChild.offsetHeight + "px";
+		taskContainer.style.height =
+			body.offsetHeight -
+			footer.offsetHeight -
+			createTask.offsetHeight +
+			40 +
+			"px";
+	}, [windowWidth]);
 	useEffect(() => {
 		setUpdateAt(props.datum[0] ? props.datum[0].updateAt : "");
 	}, [props.state, props.datum]);
 	// create options of cell
 	useEffect(() => {
-		[...$$(".task-each")].forEach((cell) => {
-			props.tasks.forEach((optionContent) => {
-				if (!optionLists.includes(optionContent)) {
+		props.tasks.forEach((optionContent) => {
+			if (!props.optionLists.current.includes(optionContent)) {
+				[...$$(".task-each")].forEach((cell) => {
 					let newOption = document.createElement("li");
 					newOption.innerText = optionContent;
 					cell.firstElementChild.appendChild(newOption);
-					setOptionLists((prev) => [...prev, optionContent]);
-				}
-			});
+				});
+				props.optionLists.current.push(optionContent);
+			}
 		});
 		// eslint-disable-next-line
-	}, [props.state, props.tasks]);
+	}, [props.state, props.optionLists.current, props.tasks]);
 	useEffect(() => {
 		setWindowWidth(window.innerWidth);
 		[...$$(".delete-data")].forEach((deleteTaskButton) => {
@@ -76,7 +90,6 @@ function TaskTable(props) {
 		return rgb;
 	};
 	const changeColor = (e) => {
-		// undoRedoHandler.insert(boxList);
 		let rgb, brightness;
 		let arr = [...$$(".ctrl-mode")];
 		for (let i = 0; i < arr.length; ++i) {
@@ -91,7 +104,7 @@ function TaskTable(props) {
 			arr[i].style.color = brightness > 125 ? "black" : "white";
 			arr[i].classList.add("custom");
 		}
-		// undoRedoHandler.insert(boxList);
+		props.handleCurrentData();
 	};
 	const removeCtrlMode = () => {
 		$("#preset").removeEventListener("input", changeColor);
@@ -122,15 +135,7 @@ function TaskTable(props) {
 		e.target.parentElement.parentElement.outerHTML = changeText;
 		$(`img[alt='${e.target.parentElement.id}']`).style.display = "block";
 		setCheckedCell(-1);
-		props.setCurrentData(
-			[...$$(".task-each")].map((cell) => {
-				return {
-					content: cell.innerText,
-					color: cell.style.color,
-					background: cell.style.backgroundColor,
-				};
-			})
-		);
+		props.handleCurrentData();
 	};
 	const handleTableResize = () => {
 		setWindowWidth(window.innerWidth);
