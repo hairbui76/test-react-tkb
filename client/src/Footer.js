@@ -1,16 +1,17 @@
 import "./css/Footer.css";
-import { useEffect } from "react";
-import { $, $$ } from "./index";
+import { useEffect, forwardRef } from "react";
 import html2canvas from "html2canvas";
 
-function Footer(props) {
+function Footer({ groupContext, undoRedoContext, ...props }, ref) {
 	useEffect(() => {
 		document.addEventListener("keydown", handleUndoRedoUseKeyboard);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const handleShowCreateMenu = () => {
-		$("#right-menu").style.display =
-			$("#right-menu").style.display === "none" ? "block" : "none";
+		groupContext.refRightMenu.current.style.display =
+			groupContext.refRightMenu.current.style.display === "none"
+				? "block"
+				: "none";
 	};
 	const handleSaveData = () => {
 		let check = prompt(
@@ -18,20 +19,7 @@ function Footer(props) {
 		);
 		if (check) {
 			if (check.trim() === "chienthan") {
-				const taskEach = [...$$(".task-each")];
-				let arr = [];
-				for (let i = 0; i < taskEach.length; ++i) {
-					if (taskEach[i].innerText) {
-						arr.push({
-							task: taskEach[i].innerText,
-							index: i,
-							background: taskEach[i].style.backgroundColor,
-							color: taskEach[i].style.color,
-							updateAt: Date(),
-						});
-					}
-				}
-				sendData(arr);
+				sendData(groupContext.data);
 			} else alert("Wrong password! Please contact your leader to continue");
 		}
 	};
@@ -57,11 +45,11 @@ function Footer(props) {
 				})
 				.catch((err) => console.log(err));
 		}
-		console.log("Saved!");
+		alert("Saved!!!");
 		props.setStateSaveData(!props.stateSaveData);
 	};
 	const handleDownloadTable = () => {
-		html2canvas($("table")).then((canvas) => {
+		html2canvas(groupContext.refTable.current).then((canvas) => {
 			let a = document.createElement("a");
 			document.body.appendChild(a);
 			a.download = "TKB.png";
@@ -71,52 +59,56 @@ function Footer(props) {
 		});
 	};
 	const handleRestoreColor = () => {
-		[...$$(".task-each")].forEach((cell) => {
-			cell.style.backgroundColor = "";
-			cell.style.color = "";
+		groupContext.setData((prev) => {
+			let newData = [...prev];
+			newData.forEach((item) => {
+				item.background = "";
+				item.color = "";
+			});
+			return newData;
 		});
 	};
 	const handleResetAll = () => {
-		$("#default").click();
-		[...$$(".task-each")].forEach((cell) => {
-			cell.firstChild.data = "";
-			cell.lastChild.style.display = "none";
+		groupContext.setData((prev) => {
+			let newData = [...prev];
+			newData.forEach((item) => {
+				item.background = "";
+				item.color = "";
+				item.task = "";
+			});
+			return newData;
 		});
-		props.setTasks([]);
-		props.setTask("");
-		// cannot use this line while keeping sth in the input field?
-		// [...$$(".close")].forEach((btn) => {
-		// 	btn.click();
-		// });
-	};
-	const handleUndoRedoState = (state) => {
-		if (state) {
-			props.isUndoRedo.current = true;
-			props.setUndoRedoSignal(!props.undoRedoSignal);
-			props.setCurrentData(state.currentData);
-			props.setTasks(state.currentTasks);
-		}
-	};
-	const handleUndo = () => {
-		console.log(props.undoRedoHandler.current);
-		let state = props.undoRedoHandler.current.getPrevState();
-		handleUndoRedoState(state);
-	};
-	const handleRedo = () => {
-		console.log(props.undoRedoHandler.current);
-		let state = props.undoRedoHandler.current.getNextState();
-		handleUndoRedoState(state);
+		groupContext.setTasks([]);
+		groupContext.setTask("");
 	};
 	const handleUndoRedoUseKeyboard = (e) => {
 		if (e.ctrlKey) {
-			if (e.key === "z") handleUndo();
-			if (e.key === "y") handleRedo();
+			if (e.key === "z") props.undoDataState();
+			if (e.key === "y") props.redoDataState();
 		}
+	};
+	const handleUndo = () => {
+		undoRedoContext.undoDataState();
+		undoRedoContext.setUndoRedoSignal(!undoRedoContext.undoRedoSignal);
+	};
+	const handleRedo = () => {
+		undoRedoContext.redoDataState();
+		undoRedoContext.setUndoRedoSignal(!undoRedoContext.undoRedoSignal);
 	};
 	return (
 		<>
-			<div id="footer">
-				<fieldset id="custom">
+			<div
+				id="footer"
+				ref={groupContext.refFooter}
+				style={{
+					width: groupContext.refCustom.current
+						? groupContext.refCustom.current.offsetWidth + "px"
+						: "",
+					height: groupContext.refCustom.current
+						? groupContext.refCustom.current.offsetHeight + "px"
+						: "",
+				}}>
+				<fieldset id="custom" ref={groupContext.refCustom}>
 					<legend>Customization:</legend>
 					<div className="box-custom">
 						<button type="submit" id="save" onClick={handleSaveData}>
@@ -124,7 +116,12 @@ function Footer(props) {
 						</button>
 					</div>
 					<div className="box-custom">
-						<input type="color" id="preset" defaultValue="#fd0000" />
+						<input
+							type="color"
+							id="preset"
+							defaultValue="#fd0000"
+							ref={groupContext.refPreset}
+						/>
 						<button id="default" onClick={handleRestoreColor}>
 							Default color
 						</button>
@@ -141,10 +138,16 @@ function Footer(props) {
 						</button>
 					</div>
 				</fieldset>
-				<button id="undo" onClick={handleUndo}>
+				<button
+					id="undo"
+					onClick={handleUndo}
+					disabled={!undoRedoContext.canUndo}>
 					Undo
 				</button>
-				<button id="redo" onClick={handleRedo}>
+				<button
+					id="redo"
+					onClick={handleRedo}
+					disabled={!undoRedoContext.canRedo}>
 					Redo
 				</button>
 			</div>
@@ -152,4 +155,4 @@ function Footer(props) {
 	);
 }
 
-export default Footer;
+export default forwardRef(Footer);

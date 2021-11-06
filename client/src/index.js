@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./css/index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { AppContextProvider } from "./context";
 
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
@@ -11,7 +12,9 @@ const root = $("#root");
 
 ReactDOM.render(
 	<React.StrictMode>
-		<App />
+		<AppContextProvider>
+			<App />
+		</AppContextProvider>
 	</React.StrictMode>,
 	root
 );

@@ -1,54 +1,69 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import "./css/RightMenu.css";
 import logoDeleteTask from "./svg/times-circle-regular.svg";
-import { $$ } from "./index";
 
-function RightMenu(props) {
+function RightMenu({ groupContext, replaceItem }, ref) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
-	const handleCreateTaskByEnter = (e) => {
-		if (e.key === "Enter") handleCreateTask();
+	const handleCreateTaskByEnter = (element) => {
+		if (element.key === "Enter") handleCreateTask();
 	};
 	const handleCreateTask = () => {
-		if (props.task === "") {
+		if (groupContext.task === "") {
 			setNewClassForIsEmpty("show-empty");
 			setNewClassForIsCreated("");
-		} else if (props.tasks.includes(props.task)) {
+		} else if (groupContext.tasks.includes(groupContext.task)) {
 			setNewClassForIsCreated("show-created");
 			setNewClassForIsEmpty("");
 		} else {
 			setNewClassForIsEmpty("");
 			setNewClassForIsCreated("");
-			props.setTasks((prev) => [...prev, props.task]);
-			props.setTask("");
+			groupContext.setTasks((prev) => [...prev, groupContext.task]);
+			groupContext.setTask("");
 		}
 	};
-	const handleDeleteTask = (e) => {
-		let removeContent = e.target.previousElementSibling.innerText;
-		[...$$(".task-each")].forEach((cell) => {
-			if (cell.innerText === removeContent) {
-				cell.firstChild.data = "";
-				cell.lastChild.style.display = "none";
-			}
+	const handleDeleteTask = (content, id) => {
+		groupContext.setData((prev) => {
+			let newData = [...prev];
+			newData.forEach((data) => {
+				if (content === data.task) {
+					let newCell = Object.assign({}, data, {
+						task: "",
+						background: "",
+						color: "",
+					});
+					newData = replaceItem(newData, newCell, data.index);
+				}
+			});
+			return newData;
 		});
-		props.setTasks((prev) => {
+		groupContext.setTasks((prev) => {
 			let newTasks = [...prev];
-			return newTasks.splice(removeContent, 1);
+			newTasks.splice(id, 1);
+			return newTasks;
 		});
-		props.handleCurrentData();
 	};
 	return (
-		<div id="right-menu">
-			<div id="task-container">
-				<fieldset id="create-task">
+		<div id="right-menu" ref={groupContext.refRightMenu}>
+			<div
+				id="task-container"
+				ref={groupContext.refTaskContainer}
+				style={{
+					height: groupContext.taskContainerHeight,
+					overFlowY:
+						groupContext.totalTasksHeight > groupContext.taskContainerHeight
+							? "scroll"
+							: "none",
+				}}>
+				<fieldset id="create-task" ref={groupContext.refCreateTask}>
 					<legend>Create task:</legend>
 					<div id="task-box">
 						<input
 							type="text"
 							placeholder="Type any task here"
-							onChange={(e) => props.setTask(e.target.value)}
+							onChange={(element) => groupContext.setTask(element.target.value)}
 							onKeyUp={handleCreateTaskByEnter}
-							value={props.task}
+							value={groupContext.task}
 						/>
 						<button id="create-btn" onClick={handleCreateTask}>
 							Create
@@ -61,15 +76,27 @@ function RightMenu(props) {
 						<small>Task has already been created!</small>
 					</p>
 				</fieldset>
-				{props.tasks.map((task, index) => {
+				{groupContext.tasks.map((task, index) => {
 					return (
-						<div className="task" key={index}>
+						<div
+							className="task"
+							key={index}
+							ref={(element) => {
+								if (
+									!groupContext.refTasks.current.find(
+										(task) => task === element
+									) &&
+									element
+								) {
+									groupContext.refTasks.current.push(element);
+								}
+							}}>
 							<div className="content">{task}</div>
 							<img
 								alt="logo-delete-task"
 								src={logoDeleteTask}
 								className="close"
-								onClick={handleDeleteTask}
+								onClick={() => handleDeleteTask(task, index)}
 							/>
 						</div>
 					);
@@ -79,4 +106,4 @@ function RightMenu(props) {
 	);
 }
 
-export default RightMenu;
+export default forwardRef(RightMenu);

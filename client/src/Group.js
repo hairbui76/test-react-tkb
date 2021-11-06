@@ -1,121 +1,98 @@
-import { useState, useLayoutEffect, useRef, useEffect } from "react";
+/* eslint-disable */
+import { useLayoutEffect, useEffect, useContext } from "react";
+import { GroupContext, UndoRedoContext } from "./context";
 import TaskTable from "./TaskTable";
 import Footer from "./Footer";
 import RightMenu from "./RightMenu";
-import UndoRedoHandler from "./UndoRedoHandler";
-import { $, $$ } from "./index";
 
-function Group(props) {
-	const [task, setTask] = useState("");
-	const [tasks, setTasks] = useState([]);
-	const [currentData, setCurrentData] = useState([]);
-	const [undoRedoSignal, setUndoRedoSignal] = useState(false);
-	const optionLists = useRef([]);
-	const isUndoRedo = useRef(false);
-	const undoRedoHandler = useRef(new UndoRedoHandler([]));
+function Group({ appContext, datum }) {
+	const groupContext = useContext(GroupContext);
+	const undoRedoContext = useContext(UndoRedoContext);
 	useEffect(() => {
-		let boxList = [...$$(".task-each")];
-		for (let i = 0; i < currentData.length; i++) {
-			if (tasks.includes(currentData[i].content) || !currentData[i].content) {
-				if (currentData[i].content)
-					boxList[i].lastChild.style.display = "block";
-				else boxList[i].lastChild.style.display = "none";
-				boxList[i].firstChild.data = currentData[i].content;
-				boxList[i].style.color = currentData[i].color;
-				boxList[i].style.backgroundColor = currentData[i].background;
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tasks, currentData]);
+		undoRedoContext.setDataState(groupContext.data);
+	}, [groupContext.data]);
 	useEffect(() => {
-		if (!isUndoRedo.current) {
-			undoRedoHandler.current.insert({
-				currentData: currentData,
-				currentTasks: tasks,
-			});
-			optionLists.current = tasks;
-		} else isUndoRedo.current = false;
-	}, [tasks, currentData]);
-	useLayoutEffect(() => {
-		setTasks([
+		groupContext.setData(undoRedoContext.dataState.present);
+		groupContext.setTasks([
 			...new Set(
-				props.datum.map((data) => {
-					return data.task;
-				})
+				undoRedoContext.dataState.present
+					.filter((data) => data.task !== "")
+					.map((data) => data.task)
 			),
 		]);
-		setCurrentData(
-			[...$$(".task-each")].map((cell) => {
-				return {
-					content: cell.innerText,
-					color: cell.style.color,
-					background: cell.style.backgroundColor,
-				};
-			})
-		);
-	}, [props.stateShowGroup, props.datum]);
+	}, [undoRedoContext.undoRedoSignal]);
 	useEffect(() => {
-		[...$$("li")].forEach((option) => {
-			if (!tasks.includes(option.innerText)) {
-				option.remove();
-			}
-		});
-		if ($(".task")) {
-			let taskBox = [...$$(".task")];
-			let totalHeight =
-				$("#footer").offsetHeight + $("#create-task").offsetHeight;
-			for (let i = 0; i < taskBox.length; ++i) {
-				totalHeight += taskBox[i].offsetHeight;
-				if (totalHeight > $("#task-container").offsetHeight)
-					$("#task-container").style.overflowY = "scroll";
-			}
-		}
-	}, [tasks]);
-	const handleCurrentData = () => {
-		setCurrentData(
-			[...$$(".task-each")].map((cell) => {
-				return {
-					content: cell.innerText,
-					color: cell.style.color,
-					background: cell.style.backgroundColor,
-				};
-			})
+		window.addEventListener("resize", () =>
+			groupContext.setWindowWidth(window.innerWidth)
 		);
+		return () =>
+			window.removeEventListener("resize", () =>
+				groupContext.setWindowWidth(window.innerWidth)
+			);
+	}, [appContext.stateShowGroup]);
+	useEffect(() => {
+		groupContext.setWindowWidth(window.innerWidth);
+		handleTaskContainerHeight();
+	}, [groupContext.windowWidth]);
+	useLayoutEffect(() => {
+		groupContext.setTasks([
+			...new Set(
+				datum
+					.filter((check) => check.task !== "")
+					.map((data) => {
+						return data.task;
+					})
+			),
+		]);
+		groupContext.setData(datum.sort(sortDataById));
+		undoRedoContext.setDataState(datum.sort(sortDataById));
+	}, [appContext.stateShowGroup, datum]);
+	useEffect(() => {
+		handleTotalTasksHeight();
+	}, [groupContext.tasks]);
+	const replaceItem = (arr, item, id) => {
+		return [...arr.slice(0, id), item, ...arr.slice(id + 1)];
+	};
+	const handleTotalTasksHeight = () => {
+		let totalHeight =
+			groupContext.refFooter.current.offsetHeight +
+			groupContext.refCreateTask.current.offsetHeight;
+		for (let i = 0; i < groupContext.refTasks.current.length; ++i) {
+			totalHeight += groupContext.refTasks.current[i].offsetHeight;
+		}
+		groupContext.setTotalTasksHeight(totalHeight);
+	};
+	const handleTaskContainerHeight = () => {
+		if (groupContext.refFooter.current && groupContext.refCreateTask.current) {
+			groupContext.setTaskContainerHeight(
+				window.innerHeight -
+					groupContext.refFooter.current.offsetHeight -
+					groupContext.refCreateTask.current.offsetHeight +
+					40 +
+					"px"
+			);
+		}
+	};
+	const sortDataById = (a, b) => {
+		if (a.index < b.index) return -1;
+		if (a.index > b.index) return 1;
+		return 0;
 	};
 	return (
 		<>
 			<TaskTable
-				state={props.stateShowGroup}
-				datum={props.datum}
-				tasks={tasks}
-				currentData={currentData}
-				setCurrentData={setCurrentData}
-				optionLists={optionLists}
-				handleCurrentData={handleCurrentData}
-				undoRedoHandler={undoRedoHandler}
+				groupContext={groupContext}
+				state={appContext.stateShowGroup}
+				datum={datum}
+				replaceItem={replaceItem}
 			/>
-			<RightMenu
-				datum={props.datum}
-				tasks={tasks}
-				setTasks={setTasks}
-				task={task}
-				setTask={setTask}
-				handleCurrentData={handleCurrentData}
-				undoRedoHandler={undoRedoHandler}
-			/>
+			<RightMenu groupContext={groupContext} replaceItem={replaceItem} />
 			<Footer
-				setStateSaveData={props.setStateSaveData}
-				stateSaveData={props.stateSaveData}
-				currentGroup={props.currentGroup}
-				setTasks={setTasks}
-				setTask={setTask}
-				setCurrentData={setCurrentData}
-				undoRedoHandler={undoRedoHandler}
-				datum={props.datum}
-				isUndoRedo={isUndoRedo}
-				setUndoRedoSignal={setUndoRedoSignal}
-				undoRedoSignal={undoRedoSignal}
-				optionLists={optionLists}
+				groupContext={groupContext}
+				undoRedoContext={undoRedoContext}
+				setStateSaveData={appContext.setStateSaveData}
+				stateSaveData={appContext.stateSaveData}
+				currentGroup={appContext.currentGroup}
 			/>
 		</>
 	);

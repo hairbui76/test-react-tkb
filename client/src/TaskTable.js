@@ -1,85 +1,24 @@
+/* eslint-disable */
 import "./css/TaskTable.css";
-import { useEffect, useState, useLayoutEffect } from "react";
-import ReactHtmlParser from "react-html-parser";
+import { useEffect, useState, useRef, forwardRef } from "react";
 import logoDelete from "./svg/times-solid.svg";
-import { $, $$ } from "./index";
 
-function TaskTable(props) {
+function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 	const [checkedCell, setCheckedCell] = useState(-1);
-	const [windowWidth, setWindowWidth] = useState(0);
-	const [updateAt, setUpdateAt] = useState("");
-	console.log(props.undoRedoHandler.current);
+	const [cellCtrlMode, setCellCtrlMode] = useState([]);
+	const refTime = useRef(null);
+	const refLesson = useRef(null);
+	const refMonday = useRef(null);
+	const refTaskEach = useRef([]);
 	useEffect(() => {
-		const footer = $("#footer");
-		const taskContainer = $("#task-container");
-		const body = $("body");
-		const createTask = $("#create-task");
-		footer.style.width = footer.firstChild.offsetWidth + "px";
-		footer.style.height = footer.firstChild.offsetHeight + "px";
-		taskContainer.style.height =
-			body.offsetHeight -
-			footer.offsetHeight -
-			createTask.offsetHeight +
-			40 +
-			"px";
-	}, [windowWidth]);
+		handleCellWidth();
+	}, [groupContext.windowWidth]);
 	useEffect(() => {
-		setUpdateAt(props.datum[0] ? props.datum[0].updateAt : "");
-	}, [props.state, props.datum]);
-	// create options of cell
+		renderData();
+	}, [props.state, groupContext.data]);
 	useEffect(() => {
-		props.tasks.forEach((optionContent) => {
-			if (!props.optionLists.current.includes(optionContent)) {
-				[...$$(".task-each")].forEach((cell) => {
-					let newOption = document.createElement("li");
-					newOption.innerText = optionContent;
-					cell.firstElementChild.appendChild(newOption);
-				});
-				props.optionLists.current.push(optionContent);
-			}
-		});
-		// eslint-disable-next-line
-	}, [props.state, props.optionLists.current, props.tasks]);
-	useEffect(() => {
-		setWindowWidth(window.innerWidth);
-		[...$$(".delete-data")].forEach((deleteTaskButton) => {
-			deleteTaskButton.onclick = deleteTask;
-		});
-		[...$$(".task-each")].forEach((cell) => {
-			cell.onclick = handleClickCell;
-		});
-		[...$$("li")].forEach((option) => {
-			option.onclick = handleChooseOption;
-		});
-		window.onresize = handleTableResize;
 		window.onclick = handleClickEverywhere;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.state, checkedCell]);
-	useEffect(() => {
-		[...$$("ul")].forEach((taskList) => {
-			taskList.style.height = taskList.parentElement.offsetHeight + "px";
-			taskList.style.width = taskList.parentElement.offsetWidth + "px";
-			taskList.style.top = taskList.parentElement.offsetHeight + "px";
-		});
-	}, [props.state, windowWidth, props.tasks]);
-	useLayoutEffect(() => {
-		[...$$("ul")].forEach((taskList) => {
-			taskList.style.display =
-				taskList.parentElement.id === checkedCell ? "block" : "none";
-		});
-	}, [props.state, checkedCell]);
-	useLayoutEffect(() => {
-		const day = [...$$(".day")];
-		for (let i = 0; i < day.length; ++i) {
-			day[i].style.width =
-				($("table").offsetWidth -
-					$("#lesson").offsetWidth -
-					$("#time").offsetWidth) /
-					7 +
-				"px";
-		}
-	}, [windowWidth]);
-	// eslint-disable-next-line no-extend-native
 	String.prototype.convertToRGB = function () {
 		let hex = this.match(/[^#]{1,2}/g);
 		let rgb = [
@@ -89,11 +28,9 @@ function TaskTable(props) {
 		];
 		return rgb;
 	};
-	const changeColor = (e) => {
-		let rgb, brightness;
-		let arr = [...$$(".ctrl-mode")];
-		for (let i = 0; i < arr.length; ++i) {
-			arr[i].style.backgroundColor = e.target.value;
+	useEffect(() => {
+		const changeColor = (e) => {
+			let rgb, brightness;
 			rgb = e.target.value.convertToRGB();
 			brightness = Math.round(
 				(parseInt(rgb[0]) * 299 +
@@ -101,17 +38,38 @@ function TaskTable(props) {
 					parseInt(rgb[2]) * 114) /
 					1000
 			);
-			arr[i].style.color = brightness > 125 ? "black" : "white";
-			arr[i].classList.add("custom");
-		}
-		props.handleCurrentData();
-	};
-	const removeCtrlMode = () => {
-		$("#preset").removeEventListener("input", changeColor);
-		[...$$(".ctrl-mode")].forEach((item) => {
-			item.classList.remove("ctrl-mode");
-		});
-	};
+			cellCtrlMode.forEach((cell) => {
+				cell.style.background = e.target.value;
+				cell.style.color = brightness > 125 ? "black" : "white";
+			});
+		};
+		const removeCtrlMode = () => {
+			groupContext.setData((prev) => {
+				let newData = [...prev];
+				cellCtrlMode.forEach((cell) => {
+					let check = newData.find((data) => data.index === parseInt(cell.id));
+					if (check) {
+						let newCell = Object.assign({}, check, {
+							background: cell.style.background,
+							color: cell.style.color,
+						});
+						newData = replaceItem(newData, newCell, check.index);
+					}
+				});
+				return newData;
+			});
+			setCellCtrlMode([]);
+		};
+		groupContext.refPreset.current.addEventListener("input", changeColor);
+		groupContext.refPreset.current.addEventListener("change", removeCtrlMode);
+		return () => {
+			groupContext.refPreset.current.removeEventListener("input", changeColor);
+			groupContext.refPreset.current.removeEventListener(
+				"change",
+				removeCtrlMode
+			);
+		};
+	}, [cellCtrlMode]);
 	const handleClickEverywhere = (e) => {
 		if (checkedCell !== -1) {
 			if (e.target.className !== "task-each") {
@@ -121,179 +79,255 @@ function TaskTable(props) {
 		}
 		if (!e.ctrlKey) {
 			if (e.target.id !== "preset") {
-				[...$$(".ctrl-mode")].forEach((item) => {
-					item.classList.remove("ctrl-mode");
-				});
+				setCellCtrlMode([]);
 			}
 		}
 	};
-	const handleChooseOption = (e) => {
-		let changeText = e.target.parentElement.parentElement.outerHTML.replace(
-			/(.*>).*[\n\t]*(<ul.*)/,
-			`$1${e.target.innerText}$2`
-		);
-		e.target.parentElement.parentElement.outerHTML = changeText;
-		$(`img[alt='${e.target.parentElement.id}']`).style.display = "block";
+	const handleChooseOption = (value, id) => {
 		setCheckedCell(-1);
-		props.handleCurrentData();
+		groupContext.setData((prev) => {
+			let newData = [...prev];
+			let replace = Object.assign({}, newData[id], { task: value });
+			newData = [...newData.slice(0, id), replace, ...newData.slice(id + 1)];
+			return newData;
+		});
 	};
-	const handleTableResize = () => {
-		setWindowWidth(window.innerWidth);
+	const handleCellWidth = () => {
+		if (groupContext.refTable.current && refLesson.current && refTime.current) {
+			return (
+				(groupContext.refTable.current.offsetWidth -
+					refTime.current.offsetWidth -
+					refLesson.current.offsetWidth) /
+					7 +
+				"px"
+			);
+		}
 	};
 	const handleClickCell = (e) => {
 		if (e.ctrlKey) {
-			e.target.classList.toggle("ctrl-mode");
-			$("#preset").addEventListener("input", changeColor);
-			$("#preset").addEventListener("change", removeCtrlMode);
+			e.target.style.opacity = "1";
+			setCheckedCell(-1);
+			setCellCtrlMode((prev) => {
+				let newList = [...prev];
+				if (newList.includes(e.target)) {
+					newList.splice(newList.indexOf(e.target), 1);
+				} else {
+					newList.push(e.target);
+				}
+				return newList;
+			});
 		} else {
 			setCheckedCell(e.target.id);
 		}
 	};
-	const deleteTask = (e) => {
-		e.target.parentElement.firstChild.data = "";
-		e.target.parentElement.style.backgroundColor = "";
-		e.target.style.display = "none";
+	const deleteData = (id) => {
+		groupContext.setData((prev) => {
+			let newData = [...prev];
+			let replace = Object.assign({}, newData[id], { task: "" });
+			newData = [...newData.slice(0, id), replace, ...newData.slice(id + 1)];
+			return newData;
+		});
+	};
+	const handleCellOpacity = (index) => {
+		if (cellCtrlMode.length) {
+			if (cellCtrlMode.includes(refTaskEach.current[index])) return 1;
+			return 0.5;
+		}
+		return 1;
+	};
+	const handleCellBorderWidth = (index) => {
+		if (cellCtrlMode.length) {
+			if (cellCtrlMode.includes(refTaskEach.current[index])) return "2px";
+			return "1px";
+		}
+		return "1px";
 	};
 	const renderData = (from) => {
-		let html = "";
+		let arr = [];
 		for (let i = from; i < from + 7; ++i) {
-			let check = props.datum.find((data) => {
-				return data.index === i;
-			});
-			if (check)
-				html += `<td class="task-each" id=${i} style="background-color: ${
-					check.background
-				}">${check.task}
-							<ul style=${{
-								display: i === checkedCell ? "block" : "none",
-							}} id=${i}>
-							</ul>
-							<img
-								src=${logoDelete}
-								class="delete-data"
-								style="display: block"
-								alt=${i}
-							/>
-						</td>`;
-			else
-				html += `<td class="task-each" id=${i}>
-							<ul style="display: none" id=${i}></ul>
-							<img
-								src=${logoDelete}
-								class="delete-data"
-								style="display: none"
-								alt=${i}
-							/>
-						</td>`;
+			arr.push(
+				<td
+					ref={(element) => refTaskEach.current.push(element)}
+					className="task-each"
+					id={i}
+					key={i}
+					style={{
+						backgroundColor: groupContext.data[i]
+							? groupContext.data[i].background.replace(/(.*\)).*/, "$1")
+							: "",
+						color: groupContext.data[i] ? groupContext.data[i].color : "black",
+						opacity: handleCellOpacity(i),
+						borderWidth: handleCellBorderWidth(i),
+					}}
+					onClick={handleClickCell}>
+					{groupContext.data[i] ? groupContext.data[i].task : ""}
+					<ul
+						id={i}
+						style={{
+							display: i === parseInt(checkedCell) ? "block" : "none",
+							width: handleCellWidth(),
+							height: refMonday.current
+								? refMonday.current.offsetHeight + "px"
+								: "",
+							top: refMonday.current
+								? refMonday.current.offsetHeight + "px"
+								: "",
+						}}>
+						{groupContext.tasks.map((data, index) => (
+							<li
+								key={index}
+								onClick={(e) => handleChooseOption(e.target.innerText, i)}>
+								{data}
+							</li>
+						))}
+					</ul>
+					<img
+						src={logoDelete}
+						className="delete-data"
+						style={{
+							display:
+								groupContext.data[i] && groupContext.data[i].task
+									? "block"
+									: "none",
+						}}
+						alt={i}
+						onClick={() => deleteData(i)}
+					/>
+				</td>
+			);
 		}
-		return html;
+		return arr;
 	};
 	return (
 		<div id="task-table">
-			<table>
+			<table ref={groupContext.refTable}>
 				<tbody>
 					<tr>
 						<td colSpan="2">UpdateAt</td>
 						<td id="update" colSpan="7">
-							{updateAt}
+							{groupContext.data[0] ? groupContext.data[0].updateAt : ""}
 						</td>
 					</tr>
 					<tr>
-						<th id="lesson">Tiết</th>
-						<th id="time" className="day">
+						<th id="lesson" ref={refLesson}>
+							Tiết
+						</th>
+						<th id="time" className="day" ref={refTime}>
 							Thời gian
 						</th>
-						<th id="monday" className="day">
+						<th
+							id="monday"
+							className="day"
+							style={{ width: handleCellWidth() }}
+							ref={refMonday}>
 							Thứ 2
 						</th>
-						<th id="tuesday" className="day">
+						<th
+							id="tuesday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Thứ 3
 						</th>
-						<th id="wednesday" className="day">
+						<th
+							id="wednesday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Thứ 4
 						</th>
-						<th id="thursday" className="day">
+						<th
+							id="thursday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Thứ 5
 						</th>
-						<th id="friday" className="day">
+						<th
+							id="friday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Thứ 6
 						</th>
-						<th id="saturday" className="day">
+						<th
+							id="saturday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Thứ 7
 						</th>
-						<th id="sunday" className="day">
+						<th
+							id="sunday"
+							className="day"
+							style={{ width: handleCellWidth() }}>
 							Chủ nhật
 						</th>
 					</tr>
 					<tr>
 						<td>1</td>
 						<td>07h00' + 07h50'</td>
-						<>{ReactHtmlParser(renderData(0))}</>
+						{renderData(0)}
 					</tr>
 					<tr>
 						<td>2</td>
 						<td>08h00' + 08h50'</td>
-						<>{ReactHtmlParser(renderData(7))}</>
+						{renderData(7)}
 					</tr>
 					<tr>
 						<td>3</td>
 						<td>09h00' + 09h50'</td>
-						<>{ReactHtmlParser(renderData(14))}</>
+						{renderData(14)}
 					</tr>
 					<tr>
 						<td>4</td>
 						<td>10h00' + 10h50'</td>
-						<>{ReactHtmlParser(renderData(21))}</>
+						{renderData(21)}
 					</tr>
 					<tr>
 						<td>5</td>
 						<td>11h00' + 11h50'</td>
-						<>{ReactHtmlParser(renderData(28))}</>
+						{renderData(28)}
 					</tr>
 					<tr>
 						<td>6</td>
 						<td>12h00' + 12h50'</td>
-						<>{ReactHtmlParser(renderData(35))}</>
+						{renderData(35)}
 					</tr>
 					<tr>
 						<td>7</td>
 						<td>13h00' + 13h50'</td>
-						<>{ReactHtmlParser(renderData(42))}</>
+						{renderData(42)}
 					</tr>
 					<tr>
 						<td>8</td>
 						<td>14h00' + 14h50'</td>
-						<>{ReactHtmlParser(renderData(49))}</>
+						{renderData(49)}
 					</tr>
 					<tr>
 						<td>9</td>
 						<td>15h00' + 15h50'</td>
-						<>{ReactHtmlParser(renderData(56))}</>
+						{renderData(56)}
 					</tr>
 					<tr>
 						<td>10</td>
 						<td>16h00' + 16h50'</td>
-						<>{ReactHtmlParser(renderData(63))}</>
+						{renderData(63)}
 					</tr>
 					<tr>
 						<td>11</td>
 						<td>17h00' + 17h50'</td>
-						<>{ReactHtmlParser(renderData(70))}</>
+						{renderData(70)}
 					</tr>
 					<tr>
 						<td>12</td>
 						<td>18h00' + 18h50'</td>
-						<>{ReactHtmlParser(renderData(77))}</>
+						{renderData(77)}
 					</tr>
 					<tr>
 						<td>13</td>
 						<td>19h00' + 19h50'</td>
-						<>{ReactHtmlParser(renderData(84))}</>
+						{renderData(84)}
 					</tr>
 					<tr>
 						<td>14</td>
 						<td>20h00' + 20h50'</td>
-						<>{ReactHtmlParser(renderData(93))}</>
+						{renderData(93)}
 					</tr>
 				</tbody>
 			</table>
@@ -301,4 +335,4 @@ function TaskTable(props) {
 	);
 }
 
-export default TaskTable;
+export default forwardRef(TaskTable);
