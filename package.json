@@ -20,7 +20,6 @@
 		"express": "^4.17.1",
 		"html2canvas": "^1.3.2",
 		"mongoose": "^6.0.12",
-		"use-local-storage-state": "^11.0.0",
 		"use-undo": "^1.0.5"
 	},
 	"devDependencies": {

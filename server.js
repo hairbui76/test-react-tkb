@@ -1,12 +1,21 @@
-import express, { json, urlencoded } from "express";
-import router from "./routes";
+const express = require("express");
+const mongoose = require("mongoose");
+const router = require("./routes");
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(json());
+mongoose
+	.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/test", {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => console.log("connect successfully"))
+	.catch((err) => console.log(err));
+
+app.use(express.json());
 app.use(
-	urlencoded({
+	express.urlencoded({
 		extended: true,
 	})
 );
