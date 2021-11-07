@@ -16,6 +16,10 @@ router.get("/group2", (req, res) => {
 	});
 });
 
+router.get("/:slug", (req, res) => {
+	res.redirect("/");
+});
+
 router.post("/group1", (req, res) => {
 	Data1.deleteMany({}).catch((err) => console.log(err));
 	req.body.forEach((data) => {
