@@ -9,6 +9,7 @@ function Group({ appContext, datum }) {
 	const [data, setData] = useState([]);
 	const groupContext = useContext(GroupContext);
 	const undoRedoContext = useContext(UndoRedoContext);
+	console.log(datum);
 	useEffect(() => {
 		undoRedoContext.setDataState(data);
 	}, [data]);
