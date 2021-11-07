@@ -19,7 +19,7 @@ function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 		);
 		if (check) {
 			if (check.trim() === "chienthan") {
-				sendData(groupContext.data);
+				sendData(props.data);
 			} else alert("Wrong password! Please contact your leader to continue");
 		}
 	};

@@ -159,9 +159,10 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 					id={i}
 					key={i}
 					style={{
-						backgroundColor: data[i]
-							? data[i].background.replace(/(.*\)).*/, "$1")
-							: "",
+						backgroundColor:
+							data[i] && data[i].background
+								? data[i].background.replace(/(.*\)).*/, "$1")
+								: "",
 						color: data[i] ? data[i].color : "black",
 						opacity: handleCellOpacity(i),
 						borderWidth: handleCellBorderWidth(i),
@@ -331,7 +332,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 					<tr>
 						<td>14</td>
 						<td>20h00' + 20h50'</td>
-						{renderData(93)}
+						{renderData(91)}
 					</tr>
 				</tbody>
 			</table>

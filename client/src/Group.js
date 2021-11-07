@@ -9,7 +9,6 @@ function Group({ appContext, datum }) {
 	const [data, setData] = useState([]);
 	const groupContext = useContext(GroupContext);
 	const undoRedoContext = useContext(UndoRedoContext);
-	console.log(datum);
 	useEffect(() => {
 		undoRedoContext.setDataState(data);
 	}, [data]);
@@ -34,14 +33,15 @@ function Group({ appContext, datum }) {
 	}, [appContext.currentGroup]);
 	useEffect(() => {
 		groupContext.setWindowWidth(window.innerWidth);
+		console.log(groupContext.windowWidth);
 		handleTaskContainerHeight();
 	}, [groupContext.windowWidth]);
 	useEffect(() => {
-		handleData();
-	}, [datum]);
-	useEffect(() => {
 		handleTotalTasksHeight();
 	}, [groupContext.tasks]);
+	useEffect(() => {
+		handleData();
+	}, [datum]);
 	const handleData = () => {
 		groupContext.setTasks([
 			...new Set(

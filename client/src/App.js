@@ -24,7 +24,7 @@ function App() {
 		};
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [appContext.stateSaveData]);
 	return (
 		<div id="container">
 			<UndoRedoContextProvider>
@@ -39,6 +39,7 @@ function App() {
 				<GroupButton
 					selectGroup1={appContext.handleShowGroup1}
 					selectGroup2={appContext.handleShowGroup2}
+					currentGroup={appContext.currentGroup}
 				/>
 			</UndoRedoContextProvider>
 		</div>
