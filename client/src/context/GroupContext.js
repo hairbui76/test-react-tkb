@@ -5,7 +5,6 @@ const GroupContext = createContext();
 function GroupContextProvider({ children }) {
 	const [task, setTask] = useState("");
 	const [tasks, setTasks] = useState([]);
-	const [data, setData] = useState([]);
 	const [windowWidth, setWindowWidth] = useState(0);
 	const [totalTasksHeight, setTotalTasksHeight] = useState("");
 	const [taskContainerHeight, setTaskContainerHeight] = useState("");
@@ -23,8 +22,6 @@ function GroupContextProvider({ children }) {
 		setTask,
 		tasks,
 		setTasks,
-		data,
-		setData,
 		windowWidth,
 		setWindowWidth,
 		totalTasksHeight,

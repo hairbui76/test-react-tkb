@@ -1,6 +1,12 @@
-/* eslint-disable */
+/* eslint-disable react-hooks/exhaustive-deps */
 import "./css/TaskTable.css";
-import { useEffect, useState, useRef, forwardRef } from "react";
+import {
+	useEffect,
+	useState,
+	useRef,
+	forwardRef,
+	useLayoutEffect,
+} from "react";
 import logoDelete from "./svg/times-solid.svg";
 
 function TaskTable({ groupContext, replaceItem, ...props }, ref) {
@@ -10,15 +16,16 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 	const refLesson = useRef(null);
 	const refMonday = useRef(null);
 	const refTaskEach = useRef([]);
-	useEffect(() => {
+	useLayoutEffect(() => {
+		props.handleData();
+	}, [props.currentGroup]);
+	useLayoutEffect(() => {
 		handleCellWidth();
-	}, [groupContext.windowWidth]);
-	useEffect(() => {
-		renderData();
-	}, [props.state, groupContext.data]);
+	}, [props.currentGroup, groupContext.windowWidth]);
 	useEffect(() => {
 		window.onclick = handleClickEverywhere;
-	}, [props.state, checkedCell]);
+	}, [props.currentGroup, checkedCell]);
+	// eslint-disable-next-line no-extend-native
 	String.prototype.convertToRGB = function () {
 		let hex = this.match(/[^#]{1,2}/g);
 		let rgb = [
@@ -44,7 +51,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 			});
 		};
 		const removeCtrlMode = () => {
-			groupContext.setData((prev) => {
+			props.setData((prev) => {
 				let newData = [...prev];
 				cellCtrlMode.forEach((cell) => {
 					let check = newData.find((data) => data.index === parseInt(cell.id));
@@ -85,7 +92,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 	};
 	const handleChooseOption = (value, id) => {
 		setCheckedCell(-1);
-		groupContext.setData((prev) => {
+		props.setData((prev) => {
 			let newData = [...prev];
 			let replace = Object.assign({}, newData[id], { task: value });
 			newData = [...newData.slice(0, id), replace, ...newData.slice(id + 1)];
@@ -121,7 +128,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 		}
 	};
 	const deleteData = (id) => {
-		groupContext.setData((prev) => {
+		props.setData((prev) => {
 			let newData = [...prev];
 			let replace = Object.assign({}, newData[id], { task: "" });
 			newData = [...newData.slice(0, id), replace, ...newData.slice(id + 1)];
@@ -142,7 +149,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 		}
 		return "1px";
 	};
-	const renderData = (from) => {
+	const renderData = (from, data = props.data) => {
 		let arr = [];
 		for (let i = from; i < from + 7; ++i) {
 			arr.push(
@@ -152,15 +159,15 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 					id={i}
 					key={i}
 					style={{
-						backgroundColor: groupContext.data[i]
-							? groupContext.data[i].background.replace(/(.*\)).*/, "$1")
+						backgroundColor: data[i]
+							? data[i].background.replace(/(.*\)).*/, "$1")
 							: "",
-						color: groupContext.data[i] ? groupContext.data[i].color : "black",
+						color: data[i] ? data[i].color : "black",
 						opacity: handleCellOpacity(i),
 						borderWidth: handleCellBorderWidth(i),
 					}}
 					onClick={handleClickCell}>
-					{groupContext.data[i] ? groupContext.data[i].task : ""}
+					{data[i] ? data[i].task : ""}
 					<ul
 						id={i}
 						style={{
@@ -185,10 +192,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 						src={logoDelete}
 						className="delete-data"
 						style={{
-							display:
-								groupContext.data[i] && groupContext.data[i].task
-									? "block"
-									: "none",
+							display: data[i] && data[i].task ? "block" : "none",
 						}}
 						alt={i}
 						onClick={() => deleteData(i)}
@@ -205,7 +209,7 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 					<tr>
 						<td colSpan="2">UpdateAt</td>
 						<td id="update" colSpan="7">
-							{groupContext.data[0] ? groupContext.data[0].updateAt : ""}
+							{props.data[0] ? props.data[0].updateAt : ""}
 						</td>
 					</tr>
 					<tr>

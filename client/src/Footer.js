@@ -2,7 +2,7 @@ import "./css/Footer.css";
 import { useEffect, forwardRef } from "react";
 import html2canvas from "html2canvas";
 
-function Footer({ groupContext, undoRedoContext, ...props }, ref) {
+function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 	useEffect(() => {
 		document.addEventListener("keydown", handleUndoRedoUseKeyboard);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,22 +59,28 @@ function Footer({ groupContext, undoRedoContext, ...props }, ref) {
 		});
 	};
 	const handleRestoreColor = () => {
-		groupContext.setData((prev) => {
+		props.setData((prev) => {
 			let newData = [...prev];
-			newData.forEach((item) => {
-				item.background = "";
-				item.color = "";
+			newData.forEach((data) => {
+				let newCell = Object.assign({}, data, {
+					background: "",
+					color: "",
+				});
+				newData = replaceItem(newData, newCell, data.index);
 			});
 			return newData;
 		});
 	};
 	const handleResetAll = () => {
-		groupContext.setData((prev) => {
+		props.setData((prev) => {
 			let newData = [...prev];
-			newData.forEach((item) => {
-				item.background = "";
-				item.color = "";
-				item.task = "";
+			newData.forEach((data) => {
+				let newCell = Object.assign({}, data, {
+					background: "",
+					color: "",
+					task: "",
+				});
+				newData = replaceItem(newData, newCell, data.index);
 			});
 			return newData;
 		});
@@ -83,8 +89,8 @@ function Footer({ groupContext, undoRedoContext, ...props }, ref) {
 	};
 	const handleUndoRedoUseKeyboard = (e) => {
 		if (e.ctrlKey) {
-			if (e.key === "z") props.undoDataState();
-			if (e.key === "y") props.redoDataState();
+			if (e.key === "z") undoRedoContext.undoDataState();
+			if (e.key === "y") undoRedoContext.redoDataState();
 		}
 	};
 	const handleUndo = () => {

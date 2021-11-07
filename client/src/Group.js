@@ -1,18 +1,19 @@
-/* eslint-disable */
-import { useLayoutEffect, useEffect, useContext } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useContext, useState } from "react";
 import { GroupContext, UndoRedoContext } from "./context";
 import TaskTable from "./TaskTable";
 import Footer from "./Footer";
 import RightMenu from "./RightMenu";
 
 function Group({ appContext, datum }) {
+	const [data, setData] = useState([]);
 	const groupContext = useContext(GroupContext);
 	const undoRedoContext = useContext(UndoRedoContext);
 	useEffect(() => {
-		undoRedoContext.setDataState(groupContext.data);
-	}, [groupContext.data]);
+		undoRedoContext.setDataState(data);
+	}, [data]);
 	useEffect(() => {
-		groupContext.setData(undoRedoContext.dataState.present);
+		setData(undoRedoContext.dataState.present);
 		groupContext.setTasks([
 			...new Set(
 				undoRedoContext.dataState.present
@@ -29,12 +30,18 @@ function Group({ appContext, datum }) {
 			window.removeEventListener("resize", () =>
 				groupContext.setWindowWidth(window.innerWidth)
 			);
-	}, [appContext.stateShowGroup]);
+	}, [appContext.currentGroup]);
 	useEffect(() => {
 		groupContext.setWindowWidth(window.innerWidth);
 		handleTaskContainerHeight();
 	}, [groupContext.windowWidth]);
-	useLayoutEffect(() => {
+	useEffect(() => {
+		handleData();
+	}, [datum]);
+	useEffect(() => {
+		handleTotalTasksHeight();
+	}, [groupContext.tasks]);
+	const handleData = () => {
 		groupContext.setTasks([
 			...new Set(
 				datum
@@ -44,12 +51,9 @@ function Group({ appContext, datum }) {
 					})
 			),
 		]);
-		groupContext.setData(datum.sort(sortDataById));
+		setData(datum.sort(sortDataById));
 		undoRedoContext.setDataState(datum.sort(sortDataById));
-	}, [appContext.stateShowGroup, datum]);
-	useEffect(() => {
-		handleTotalTasksHeight();
-	}, [groupContext.tasks]);
+	};
 	const replaceItem = (arr, item, id) => {
 		return [...arr.slice(0, id), item, ...arr.slice(id + 1)];
 	};
@@ -82,17 +86,27 @@ function Group({ appContext, datum }) {
 		<>
 			<TaskTable
 				groupContext={groupContext}
-				state={appContext.stateShowGroup}
+				currentGroup={appContext.currentGroup}
 				datum={datum}
 				replaceItem={replaceItem}
+				data={data}
+				setData={setData}
+				handleData={handleData}
 			/>
-			<RightMenu groupContext={groupContext} replaceItem={replaceItem} />
+			<RightMenu
+				groupContext={groupContext}
+				replaceItem={replaceItem}
+				setData={setData}
+			/>
 			<Footer
 				groupContext={groupContext}
 				undoRedoContext={undoRedoContext}
 				setStateSaveData={appContext.setStateSaveData}
 				stateSaveData={appContext.stateSaveData}
 				currentGroup={appContext.currentGroup}
+				replaceItem={replaceItem}
+				data={data}
+				setData={setData}
 			/>
 		</>
 	);

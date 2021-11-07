@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const Data2 = new Schema({
 	task: String,
@@ -9,4 +9,4 @@ const Data2 = new Schema({
 	updateAt: String,
 });
 
-module.exports = mongoose.model("Data2", Data2);
+export default model("Data2", Data2);

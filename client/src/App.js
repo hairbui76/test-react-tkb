@@ -37,7 +37,7 @@ function App() {
 					)}
 				</GroupContextProvider>
 				<GroupButton
-					selectGroup1={appContext.handleShowGroup2}
+					selectGroup1={appContext.handleShowGroup1}
 					selectGroup2={appContext.handleShowGroup2}
 				/>
 			</UndoRedoContextProvider>

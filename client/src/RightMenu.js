@@ -2,7 +2,7 @@ import { useState, forwardRef } from "react";
 import "./css/RightMenu.css";
 import logoDeleteTask from "./svg/times-circle-regular.svg";
 
-function RightMenu({ groupContext, replaceItem }, ref) {
+function RightMenu({ groupContext, replaceItem, setData }, ref) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
 	const handleCreateTaskByEnter = (element) => {
@@ -23,7 +23,7 @@ function RightMenu({ groupContext, replaceItem }, ref) {
 		}
 	};
 	const handleDeleteTask = (content, id) => {
-		groupContext.setData((prev) => {
+		setData((prev) => {
 			let newData = [...prev];
 			newData.forEach((data) => {
 				if (content === data.task) {
