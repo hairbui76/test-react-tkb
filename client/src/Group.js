@@ -33,7 +33,6 @@ function Group({ appContext, datum }) {
 	}, [appContext.currentGroup]);
 	useEffect(() => {
 		groupContext.setWindowWidth(window.innerWidth);
-		console.log(groupContext.windowWidth);
 		handleTaskContainerHeight();
 	}, [groupContext.windowWidth]);
 	useEffect(() => {
