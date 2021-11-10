@@ -1,11 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-	Navigate,
-} from "react-router-dom";
 import "./css/index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -14,12 +8,7 @@ import { AppContextProvider } from "./context";
 ReactDOM.render(
 	<React.StrictMode>
 		<AppContextProvider>
-			<Router>
-				<Routes>
-					<Route path="/:slug" element={<Navigate to="/" />} />
-					<Route path="/" element={<App />} />
-				</Routes>
-			</Router>
+			<App />
 		</AppContextProvider>
 	</React.StrictMode>,
 	document.getElementById("root")

@@ -16,8 +16,8 @@ function App() {
 	});
 	useEffect(() => {
 		const fetchData = async () => {
-			const response1 = await fetch("/group1");
-			const response2 = await fetch("/group2");
+			const response1 = await fetch("/group1?type=fetch");
+			const response2 = await fetch("/group2?type=fetch");
 			const data1 = await response1.json();
 			const data2 = await response2.json();
 			setData({ group1: data1, group2: data2 });

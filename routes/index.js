@@ -5,15 +5,19 @@ const Data1 = require("../models/Data1");
 const Data2 = require("../models/Data2");
 
 router.get("/group1", (req, res) => {
-	Data1.find({}).then((data) => {
-		res.json(data);
-	});
+	if (req.query.type == "fetch") {
+		Data1.find({}).then((data) => {
+			res.json(data);
+		});
+	} else res.redirect("/");
 });
 
 router.get("/group2", (req, res) => {
-	Data2.find({}).then((data) => {
-		res.json(data);
-	});
+	if (req.query.type == "fetch") {
+		Data2.find({}).then((data) => {
+			res.json(data);
+		});
+	} else res.redirect("/");
 });
 
 router.get("/:slug", (req, res) => {
