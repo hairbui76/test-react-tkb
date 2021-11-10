@@ -10,14 +10,14 @@ router.get("/group1", (req, res) => {
 	});
 });
 
-router.get("/:slug", (req, res) => {
-	res.redirect("/");
-});
-
 router.get("/group2", (req, res) => {
 	Data2.find({}).then((data) => {
 		res.json(data);
 	});
+});
+
+router.get("/:slug", (req, res) => {
+	res.redirect("/");
 });
 
 router.post("/group1", (req, res) => {
