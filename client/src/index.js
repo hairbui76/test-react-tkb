@@ -4,12 +4,16 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AppContextProvider } from "./context";
+import { Helmet } from "react-helmet";
 
 ReactDOM.render(
 	<React.StrictMode>
 		<AppContextProvider>
 			<App />
 		</AppContextProvider>
+		<Helmet>
+			<script src="./hoverTable.js"></script>
+		</Helmet>
 	</React.StrictMode>,
 	document.getElementById("root")
 );

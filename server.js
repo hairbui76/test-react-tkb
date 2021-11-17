@@ -20,9 +20,6 @@ app.use(
 	})
 );
 
-app.all("*", (req, res) => {
-	res.sendFile(__dirname + "/index.html");
-});
 app.use("/", router);
 
 app.listen(port, () => {
