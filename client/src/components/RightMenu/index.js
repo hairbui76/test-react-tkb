@@ -1,6 +1,5 @@
 import { useState, forwardRef } from "react";
-import "./css/RightMenu.css";
-import logoDeleteTask from "./svg/times-circle-regular.svg";
+import "./RightMenu.css";
 
 function RightMenu({ groupContext, replaceItem, setData }, ref) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
@@ -55,10 +54,13 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 							? "scroll"
 							: "none",
 				}}>
-				<fieldset id="create-task" ref={groupContext.refCreateTask}>
-					<legend>Create task:</legend>
+				<div id="create-task" ref={groupContext.refCreateTask}>
+					<p style={{ margin: "5px 0", fontWeight: "500", color: "#484848" }}>
+						Create task:
+					</p>
 					<div id="task-box">
 						<input
+							id="input-task"
 							type="text"
 							placeholder="Type any task here"
 							onChange={(element) => groupContext.setTask(element.target.value)}
@@ -75,7 +77,7 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 					<p id="is-created" className={newClassForIsCreated}>
 						<small>Task has already been created!</small>
 					</p>
-				</fieldset>
+				</div>
 				{groupContext.tasks.map((task, index) => {
 					return (
 						<div
@@ -92,12 +94,10 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 								}
 							}}>
 							<div className="content">{task}</div>
-							<img
-								alt="logo-delete-task"
-								src={logoDeleteTask}
-								className="close"
-								onClick={() => handleDeleteTask(task, index)}
-							/>
+
+							<i
+								className="close fas fa-times-circle"
+								onClick={() => handleDeleteTask(task, index)}></i>
 						</div>
 					);
 				})}

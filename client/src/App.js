@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import "./css/App.css";
-import Group from "./Group";
-import GroupButton from "./GroupButton";
+import "./App.css";
+import { Group, GroupButton } from "./components";
 import {
 	GroupContextProvider,
 	AppContext,

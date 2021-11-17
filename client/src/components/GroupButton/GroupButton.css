@@ -13,10 +13,20 @@ div #btn-1,
 #btn-2 {
 	width: 100%;
 	height: 100%;
+	color: white;
+	margin: 0 5px;
+	background-color: #484848;
+	border: none;
+	border-radius: 16px;
+	cursor: pointer;
 }
 
 #button-group {
 	display: flex;
 	width: 100%;
 	height: 100%;
+}
+
+#button-group button:hover:not(:disabled) {
+	background-color: rgba(0, 150, 136, 0.8);
 }

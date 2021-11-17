@@ -1,4 +1,4 @@
-import "./css/Footer.css";
+import "./Footer.css";
 import { useEffect, forwardRef } from "react";
 import html2canvas from "html2canvas";
 
@@ -114,15 +114,22 @@ function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 						? groupContext.refCustom.current.offsetHeight + "px"
 						: "",
 				}}>
-				<fieldset id="custom" ref={groupContext.refCustom}>
-					<legend>Customization:</legend>
+				<div id="custom" ref={groupContext.refCustom}>
+					<p
+						style={{
+							fontWeight: "500",
+							margin: "5px 0",
+							color: "#57b846",
+						}}>
+						Customization:
+					</p>
 					<div className="box-custom">
 						<button type="submit" id="save" onClick={handleSaveData}>
 							Save
 						</button>
 					</div>
 					<div className="box-custom">
-						<input
+						{/* <input
 							type="color"
 							id="preset"
 							defaultValue="#fd0000"
@@ -130,7 +137,7 @@ function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 						/>
 						<button id="default" onClick={handleRestoreColor}>
 							Default color
-						</button>
+						</button> */}
 						<button id="reset" onClick={handleResetAll}>
 							Reset all
 						</button>
@@ -143,17 +150,25 @@ function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 							Save as png
 						</button>
 					</div>
-				</fieldset>
+				</div>
 				<button
 					id="undo"
 					onClick={handleUndo}
-					disabled={!undoRedoContext.canUndo}>
+					disabled={!undoRedoContext.canUndo}
+					style={{
+						opacity: undoRedoContext.canUndo ? "1" : "0.5",
+						cursor: undoRedoContext.canUndo ? "pointer" : "default",
+					}}>
 					Undo
 				</button>
 				<button
 					id="redo"
 					onClick={handleRedo}
-					disabled={!undoRedoContext.canRedo}>
+					disabled={!undoRedoContext.canRedo}
+					style={{
+						opacity: undoRedoContext.canRedo ? "1" : "0.5",
+						cursor: undoRedoContext.canRedo ? "pointer" : "default",
+					}}>
 					Redo
 				</button>
 			</div>

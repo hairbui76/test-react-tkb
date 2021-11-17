@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useContext, useState } from "react";
-import { GroupContext, UndoRedoContext } from "./context";
-import TaskTable from "./TaskTable";
-import Footer from "./Footer";
-import RightMenu from "./RightMenu";
+import { GroupContext, UndoRedoContext } from "../../context";
+import { TaskTable, Footer, RightMenu } from "../../components";
 
 function Group({ appContext, datum }) {
 	const [data, setData] = useState([]);
