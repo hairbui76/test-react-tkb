@@ -21,6 +21,9 @@ app.use(
 );
 
 app.use("/", router);
+app.all("*", (req, res) => {
+	res.sendFile(__dirname + "/public/index.html");
+});
 
 app.listen(port, () => {
 	console.log(`Listening at http://localhost:${port}`);
