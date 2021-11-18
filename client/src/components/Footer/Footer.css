@@ -56,6 +56,11 @@
 	border-radius: 10px;
 }
 
+#undo:hover:not(:disabled),
+#redo:hover:not(:disabled) {
+	background-color: #57b846;
+}
+
 #undo {
 	left: -60%;
 }

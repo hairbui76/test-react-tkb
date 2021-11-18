@@ -1,16 +1,27 @@
-import React from "react";
+import { StrictMode, useEffect } from "react";
 import ReactDOM from "react-dom";
+import reportWebVitals from "./reportWebVitals";
+
 import "./index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { AppContextProvider } from "./context";
 
+const loader = document.getElementById("loader");
+
+const showLoader = () => {
+	loader.classList.remove("loader-hide");
+};
+
+const hideLoader = () => {
+	loader.classList.add("loader-hide");
+};
+
 ReactDOM.render(
-	<React.StrictMode>
+	<StrictMode>
 		<AppContextProvider>
-			<App />
+			<App hideLoader={hideLoader} showLoader={showLoader} />
 		</AppContextProvider>
-	</React.StrictMode>,
+	</StrictMode>,
 	document.getElementById("root")
 );
 

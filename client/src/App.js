@@ -9,12 +9,14 @@ import {
 	UndoRedoContextProvider,
 } from "./context";
 
-function App() {
+function App({ hideLoader }) {
 	const appContext = useContext(AppContext);
 	const [data, setData] = useState({
 		group1: [],
 		group2: [],
 	});
+	// eslint-disable-next-line
+	useEffect(hideLoader, []);
 	useEffect(() => {
 		const fetchData = async () => {
 			const response1 = await fetch("/group1?type=fetch");
