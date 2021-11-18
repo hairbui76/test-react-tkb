@@ -114,20 +114,22 @@ function TaskTable({ groupContext, replaceItem, ...props }, ref) {
 		}
 	};
 	const handleClickCell = (e) => {
-		if (e.ctrlKey) {
-			e.target.style.opacity = "1";
-			setCheckedCell(-1);
-			setCellCtrlMode((prev) => {
-				let newList = [...prev];
-				if (newList.includes(e.target)) {
-					newList.splice(newList.indexOf(e.target), 1);
-				} else {
-					newList.push(e.target);
-				}
-				return newList;
-			});
-		} else {
-			setCheckedCell(e.target.id);
+		if (groupContext.windowWidth >= 768) {
+			if (e.ctrlKey) {
+				e.target.style.opacity = "1";
+				setCheckedCell(-1);
+				setCellCtrlMode((prev) => {
+					let newList = [...prev];
+					if (newList.includes(e.target)) {
+						newList.splice(newList.indexOf(e.target), 1);
+					} else {
+						newList.push(e.target);
+					}
+					return newList;
+				});
+			} else {
+				setCheckedCell(e.target.id);
+			}
 		}
 	};
 	const deleteData = (id) => {
