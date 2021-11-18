@@ -1,11 +1,12 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useRef } from "react";
 import "./RightMenu.css";
 
 function RightMenu({ groupContext, replaceItem, setData }, ref) {
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
-	const handleCreateTaskByEnter = (element) => {
-		if (element.key === "Enter") handleCreateTask();
+	const refInputTask = useRef();
+	const handleCreateTaskByEnter = (e) => {
+		if (e.key === "Enter") handleCreateTask();
 	};
 	const handleCreateTask = () => {
 		if (groupContext.task === "") {
@@ -20,6 +21,7 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 			groupContext.setTasks((prev) => [...prev, groupContext.task]);
 			groupContext.setTask("");
 		}
+		refInputTask.current.focus();
 	};
 	const handleDeleteTask = (content, id) => {
 		setData((prev) => {
@@ -63,6 +65,7 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 							id="input-task"
 							type="text"
 							placeholder="Type any task here"
+							ref={refInputTask}
 							onChange={(element) => groupContext.setTask(element.target.value)}
 							onKeyUp={handleCreateTaskByEnter}
 							value={groupContext.task}
