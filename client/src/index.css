@@ -12,9 +12,8 @@ body {
 }
 
 #loader {
-	background: white center center / auto 50% no-repeat url("./react.png");
 	width: 100vw;
-	height: 100vh;
+	height: 4px;
 	overflow: hidden;
 	position: absolute;
 	top: 0;
@@ -27,8 +26,7 @@ body {
 
 #first,
 #second {
-	background-color: #056d8b;
-	height: 4px;
+	background-color: #57b846;
 	bottom: 0;
 	left: 0;
 	right: 0;
