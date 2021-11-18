@@ -15,8 +15,12 @@ function App({ hideLoader }) {
 		group1: [],
 		group2: [],
 	});
-	// eslint-disable-next-line
-	useEffect(hideLoader, []);
+	useEffect(() => {
+		if (data.group1.length > 0) {
+			hideLoader();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data]);
 	useEffect(() => {
 		const fetchData = async () => {
 			const response1 = await fetch("/group1?type=fetch");

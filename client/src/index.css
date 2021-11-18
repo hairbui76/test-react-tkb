@@ -12,10 +12,13 @@ body {
 }
 
 #loader {
-	background-color: #c6dafc;
-	height: 4px;
+	background: white center center / auto 50% no-repeat url("./react.png");
+	width: 100vw;
+	height: 100vh;
 	overflow: hidden;
-	position: relative;
+	position: absolute;
+	top: 0;
+	z-index: 100;
 }
 
 .loader-hide {
@@ -25,6 +28,7 @@ body {
 #first,
 #second {
 	background-color: #056d8b;
+	height: 4px;
 	bottom: 0;
 	left: 0;
 	right: 0;
