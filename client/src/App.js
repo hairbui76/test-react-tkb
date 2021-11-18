@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 
 import "./App.css";
 import { Group, GroupButton } from "./components";
+import { HoverTableScript } from "./scripts";
 import {
 	GroupContextProvider,
 	AppContext,
@@ -28,6 +29,7 @@ function App() {
 	return (
 		<div id="container">
 			<UndoRedoContextProvider>
+				<HoverTableScript />
 				<GroupContextProvider>
 					{appContext.showGroup1 && (
 						<Group datum={data.group1} appContext={appContext} />

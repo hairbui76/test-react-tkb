@@ -9,11 +9,8 @@ import {
 	useLayoutEffect,
 } from "react";
 import logoDelete from "../../svg/times-solid.svg";
-import { useScripts } from "../../hooks";
 
 function TaskTable({ groupContext, replaceItem, ...props }, ref) {
-	console.log(process.env.PUBLIC_URL);
-	useScripts(process.env.PUBLIC_URL + "/hoverTable.js");
 	const [checkedCell, setCheckedCell] = useState(-1);
 	const [cellCtrlMode, setCellCtrlMode] = useState([]);
 	const [hoverOption, setHoverOption] = useState({ id: -1, data: "" });
