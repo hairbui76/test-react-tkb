@@ -33,6 +33,7 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 						background: "",
 						color: "",
 					});
+					console.log(newCell);
 					newData = replaceItem(newData, newCell, data.index);
 				}
 			});
