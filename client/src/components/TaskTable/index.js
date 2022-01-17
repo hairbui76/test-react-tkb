@@ -7,10 +7,13 @@ import {
 	useRef,
 	forwardRef,
 	useLayoutEffect,
+	useContext,
 } from "react";
+import { GroupContext } from "../../context";
 import logoDelete from "../../svg/times-solid.svg";
 
-function TaskTable({ groupContext, replaceItem, ...props }, ref) {
+function TaskTable({ replaceItem, ...props }, ref) {
+	const groupContext = useContext(GroupContext);
 	const [checkedCell, setCheckedCell] = useState(-1);
 	const [cellCtrlMode, setCellCtrlMode] = useState([]);
 	const [hoverOption, setHoverOption] = useState({ id: -1, data: "" });

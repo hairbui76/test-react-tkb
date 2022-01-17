@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useContext, useState } from "react";
-import { GroupContext, UndoRedoContext } from "../../context";
+import { GroupContext, UndoRedoContext, AppContext } from "../../context";
 import { TaskTable, Footer, RightMenu } from "../../components";
 
-function Group({ appContext, datum }) {
+function Group({ datum }) {
+	const appContext = useContext(AppContext);
 	const [data, setData] = useState([]);
 	const groupContext = useContext(GroupContext);
 	const undoRedoContext = useContext(UndoRedoContext);
@@ -83,7 +84,6 @@ function Group({ appContext, datum }) {
 	return (
 		<>
 			<TaskTable
-				groupContext={groupContext}
 				currentGroup={appContext.currentGroup}
 				datum={datum}
 				replaceItem={replaceItem}
@@ -91,14 +91,8 @@ function Group({ appContext, datum }) {
 				setData={setData}
 				handleData={handleData}
 			/>
-			<RightMenu
-				groupContext={groupContext}
-				replaceItem={replaceItem}
-				setData={setData}
-			/>
+			<RightMenu replaceItem={replaceItem} setData={setData} />
 			<Footer
-				groupContext={groupContext}
-				undoRedoContext={undoRedoContext}
 				setStateSaveData={appContext.setStateSaveData}
 				stateSaveData={appContext.stateSaveData}
 				currentGroup={appContext.currentGroup}

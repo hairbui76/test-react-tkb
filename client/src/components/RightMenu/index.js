@@ -1,7 +1,9 @@
-import { useState, forwardRef, useRef } from "react";
+import { useState, forwardRef, useRef, useContext } from "react";
+import { GroupContext } from "../../context";
 import "./RightMenu.css";
 
-function RightMenu({ groupContext, replaceItem, setData }, ref) {
+function RightMenu({ replaceItem, setData }, ref) {
+	const groupContext = useContext(GroupContext);
 	const [newClassForIsEmpty, setNewClassForIsEmpty] = useState("");
 	const [newClassForIsCreated, setNewClassForIsCreated] = useState("");
 	const refInputTask = useRef();
@@ -33,7 +35,6 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 						background: "",
 						color: "",
 					});
-					console.log(newCell);
 					newData = replaceItem(newData, newCell, data.index);
 				}
 			});
@@ -98,7 +99,6 @@ function RightMenu({ groupContext, replaceItem, setData }, ref) {
 								}
 							}}>
 							<div className="content">{task}</div>
-
 							<i
 								className="close fas fa-times-circle"
 								onClick={() => handleDeleteTask(task, index)}></i>

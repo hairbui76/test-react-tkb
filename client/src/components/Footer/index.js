@@ -1,8 +1,11 @@
 import "./Footer.css";
-import { useEffect, forwardRef } from "react";
+import { useEffect, forwardRef, useContext } from "react";
+import { GroupContext, UndoRedoContext } from "../../context";
 import html2canvas from "html2canvas";
 
-function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
+function Footer({ replaceItem, ...props }, ref) {
+	const groupContext = useContext(GroupContext);
+	const undoRedoContext = useContext(UndoRedoContext);
 	useEffect(() => {
 		document.addEventListener("keydown", handleUndoRedoUseKeyboard);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,19 +61,19 @@ function Footer({ groupContext, undoRedoContext, replaceItem, ...props }, ref) {
 			a.click();
 		});
 	};
-	const handleRestoreColor = () => {
-		props.setData((prev) => {
-			let newData = [...prev];
-			newData.forEach((data) => {
-				let newCell = Object.assign({}, data, {
-					background: "",
-					color: "",
-				});
-				newData = replaceItem(newData, newCell, data.index);
-			});
-			return newData;
-		});
-	};
+	// const handleRestoreColor = () => {
+	// 	props.setData((prev) => {
+	// 		let newData = [...prev];
+	// 		newData.forEach((data) => {
+	// 			let newCell = Object.assign({}, data, {
+	// 				background: "",
+	// 				color: "",
+	// 			});
+	// 			newData = replaceItem(newData, newCell, data.index);
+	// 		});
+	// 		return newData;
+	// 	});
+	// };
 	const handleResetAll = () => {
 		props.setData((prev) => {
 			let newData = [...prev];
