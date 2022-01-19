@@ -31,7 +31,7 @@ function App({ hideLoader }) {
 	}, [stateFetchData]);
 	// check if data has been fetched successfully, hide the loader animation
 	useEffect(() => {
-		if (data.group1.length > 0) {
+		if (data.group1.length > 0 || data.group2.length > 0) {
 			hideLoader();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
