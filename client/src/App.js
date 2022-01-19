@@ -18,8 +18,9 @@ function App({ hideLoader }) {
 	});
 	// if data.group1 or data.group2 is undefined after fetch data, create a new data
 	useEffect(() => {
+		// check if fetch data finished
 		if (stateFetchData) {
-			if (!data.group1) {
+			if (!data.group1 || data.group1.length === 0) {
 				setData({ group2: data.group2, group1: createBlankData() });
 			}
 			if (!data.group2 || data.group2.length === 0) {
