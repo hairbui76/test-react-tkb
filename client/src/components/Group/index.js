@@ -3,7 +3,7 @@ import { useEffect, useContext, useState } from "react";
 import { GroupContext, UndoRedoContext, AppContext } from "../../context";
 import { TaskTable, Footer, RightMenu } from "../../components";
 
-function Group({ datum }) {
+function Group({ datum = [] }) {
 	const appContext = useContext(AppContext);
 	const [data, setData] = useState([]);
 	const groupContext = useContext(GroupContext);
