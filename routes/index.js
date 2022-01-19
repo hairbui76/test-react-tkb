@@ -25,19 +25,29 @@ router.get("/:slug", (req, res) => {
 });
 
 router.post("/group1", (req, res) => {
-	Data1.deleteMany({}).catch((err) => console.log(err));
-	req.body.forEach((data) => {
-		let newData = new Data1(data);
-		newData.save();
-	});
+	Data1.deleteMany({})
+		.then((model) => {
+			console.log(model);
+			req.body.forEach((data) => {
+				let newData = new Data1(data);
+				newData.save();
+			});
+			res.send("Saved successfully!");
+		})
+		.catch((err) => console.log(err));
 });
 
 router.post("/group2", (req, res) => {
-	Data2.deleteMany({}).catch((err) => console.log(err));
-	req.body.forEach((data) => {
-		let newData = new Data2(data);
-		newData.save();
-	});
+	Data2.deleteMany({})
+		.then((model) => {
+			console.log(model);
+			req.body.forEach((data) => {
+				let newData = new Data2(data);
+				newData.save();
+			});
+			res.send("Saved successfully!");
+		})
+		.catch((err) => console.log(err));
 });
 
 module.exports = router;

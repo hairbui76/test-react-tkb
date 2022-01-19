@@ -37,6 +37,7 @@ function Footer({ replaceItem, ...props }, ref) {
 			})
 				.then(() => {
 					alert("Saving successfully!");
+					props.setStateSaveData(!props.stateSaveData);
 				})
 				.catch((err) => console.log(err));
 		} else {
@@ -49,10 +50,10 @@ function Footer({ replaceItem, ...props }, ref) {
 			})
 				.then(() => {
 					alert("Saving successfully!");
+					props.setStateSaveData(!props.stateSaveData);
 				})
 				.catch((err) => console.log(err));
 		}
-		props.setStateSaveData(!props.stateSaveData);
 	};
 	const handleDownloadTable = () => {
 		html2canvas(groupContext.refTable.current).then((canvas) => {
