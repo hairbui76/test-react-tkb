@@ -34,7 +34,11 @@ function Footer({ replaceItem, ...props }, ref) {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(arr),
-			}).catch((err) => console.log(err));
+			})
+				.then(() => {
+					alert("Saving successfully!");
+				})
+				.catch((err) => console.log(err));
 		} else {
 			fetch("/group2", {
 				method: "POST",
@@ -48,7 +52,6 @@ function Footer({ replaceItem, ...props }, ref) {
 				})
 				.catch((err) => console.log(err));
 		}
-		alert("Saved!!!");
 		props.setStateSaveData(!props.stateSaveData);
 	};
 	const handleDownloadTable = () => {
