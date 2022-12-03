@@ -1,1 +1,1 @@
-export { default as HoverTableScript } from "./HoverTableScript.js";
+export { default as HoverTableScript } from "./HoverTableScript";
