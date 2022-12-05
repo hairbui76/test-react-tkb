@@ -1,0 +1,15 @@
+[functions]
+directory = "src"
+
+[build]
+publish = "client/build"
+
+[[redirects]]
+from = "/group1"
+to = "/.netlify/functions/api/group1"
+query = { type = "fetch" }
+
+[[redirects]]
+from = "/group2"
+to = "/.netlify/functions/api/group2"
+query = { type = "fetch" }
