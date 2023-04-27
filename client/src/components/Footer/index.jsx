@@ -28,7 +28,7 @@ function Footer({ replaceItem, ...props }, ref) {
 	};
 	const sendData = (arr) => {
 		if (props.currentGroup === 1) {
-			fetch("/group1", {
+			fetch("https://nclc-tkb.netlify.app/.netlify/functions/api/group1", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -41,7 +41,7 @@ function Footer({ replaceItem, ...props }, ref) {
 				})
 				.catch((err) => console.log(err));
 		} else {
-			fetch("/group2", {
+			fetch("https://nclc-tkb.netlify.app/.netlify/functions/api/group2", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

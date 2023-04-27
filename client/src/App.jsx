@@ -11,24 +11,11 @@ import {
 
 function App({ hideLoader }) {
 	const appContext = useContext(AppContext);
-	const [stateFetchData, setStateFetchData] = useState(false);
 	const [data, setData] = useState({
 		group1: [],
 		group2: [],
 	});
 	// if data.group1 or data.group2 is undefined after fetch data, create a new data
-	useEffect(() => {
-		// check if fetch data finished
-		if (stateFetchData) {
-			if (!data.group1 || data.group1.length === 0) {
-				setData({ group2: data.group2, group1: createBlankData() });
-			}
-			if (!data.group2 || data.group2.length === 0) {
-				setData({ group1: data.group1, group2: createBlankData() });
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stateFetchData]);
 	// check if data has been fetched successfully, hide the loader animation
 	useEffect(() => {
 		if (data.group1.length > 0 || data.group2.length > 0) {
@@ -43,8 +30,17 @@ function App({ hideLoader }) {
 			const response2 = await fetch("/group2?type=fetch");
 			const data1 = await response1.json();
 			const data2 = await response2.json();
-			setData({ group1: data1, group2: data2 });
-			setStateFetchData(true);
+			setData((prev) =>
+				Object.assign({}, prev, { group1: data1, group2: data2 })
+			);
+			if (data1.length === 0)
+				setData((prev) =>
+					Object.assign({}, prev, { group1: createBlankData() })
+				);
+			if (data2.length === 0)
+				setData((prev) =>
+					Object.assign({}, prev, { group2: createBlankData() })
+				);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [appContext.stateSaveData]);
