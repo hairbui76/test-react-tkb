@@ -83,7 +83,7 @@ function RightMenu({ replaceItem, setData }, ref) {
 						<small>Task has already been created!</small>
 					</p>
 				</div>
-				{groupContext.tasks.map((task, index) => {
+				{groupContext.tasks.toSorted().map((task, index) => {
 					return (
 						<div
 							className="task"
